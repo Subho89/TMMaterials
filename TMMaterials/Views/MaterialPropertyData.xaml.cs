@@ -11,26 +11,20 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using TMMaterials.DAL.Model;
 using TMMaterials.ViewModel;
 
 namespace TMMaterials.Views
 {
     /// <summary>
-    /// Interaction logic for AddMaterials.xaml
+    /// Interaction logic for MaterialPropertyData.xaml
     /// </summary>
-    public partial class AddMaterials : Window
+    public partial class MaterialPropertyData : Window
     {
-        public AddMaterials()
+        tblCollectionStandards collectionStandards;
+        public MaterialPropertyData()
         {
             InitializeComponent();
-
-            this.DataContextChanged += (s, e) =>
-            {
-                if (DataContext is AddMaterialsVM vm)
-                {
-                    vm.CloseAction ??= () => this.Close(); //
-                }
-            };
         }
     }
 }

@@ -16,23 +16,45 @@ namespace TMMaterials.Services.ViewModels
 
         public List<tblMaterialTypes> GetAllTypes() => _db.tblMaterialTypes.ToList();
 
-        public List<string> GetStandards(int? regionId, int materialTypeId)
+        public List<StandardLookupVM> GetStandards(int? regionId, int materialTypeId)
         {
-            // Ensure we filter by BOTH Region and Material Type for a true cascading effect
-            return _db.tblCollectionStandards
-                      .Where(x => x.mainId == regionId && x.materialTypeId == materialTypeId)
-                      .Select(x => x.MaterialName) // Use the property name that holds the Standard string
-                      .Distinct()
-                      .ToList();
+            return (from cs in _db.tblCollectionStandards
+                    join s in _db.tblStandards on cs.standardId equals s.standardId
+                    where cs.mainId == regionId && cs.materialTypeId == materialTypeId
+                    select new StandardLookupVM
+                    {
+                        StandardId = s.standardId,
+                        StandardName = s.StandardName
+                    })
+                    .Distinct()
+                    .ToList();
         }
 
-        public List<tblCollectionStandards> GetGrades(int? regionId, int? materialTypeId, string standardName)
+        public List<tblCollectionStandards> GetGrades(int? regionId, int materialTypeId, int standardId)
         {
+            // Filtering by foreign keys (mainId, materialTypeId, and standardId) 
+            // ensures we get the exact grades linked to that specific standard record.
             return _db.tblCollectionStandards
                       .Where(x => x.mainId == regionId &&
                                   x.materialTypeId == materialTypeId &&
-                                  x.MaterialName == standardName)
+                                  x.standardId == standardId)
                       .ToList();
         }
+
+        public tblCollectionStandards GetMaterialDetailsByGrade(string gradeName)
+        {
+           
+            {
+                // Fetch the record containing Isotropic and Weight data
+                return _db.tblCollectionStandards
+                              .FirstOrDefault(m => m.MaterialGrade == gradeName);
+            }
+        }
+    }
+
+    public class StandardLookupVM
+    {
+        public int StandardId { get; set; }
+        public string StandardName { get; set; }
     }
 }

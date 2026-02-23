@@ -1,0 +1,42 @@
+﻿<Window x:Class="TMMaterials.Views.MaterialPropertyData"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:TMMaterials.ViewModel"
+        xmlns:local="clr-namespace:TMMaterials.Views"
+        d:DataContext="{d:DesignInstance Type=vm:MaterialPropertyDataVM}"
+        mc:Ignorable="d"
+        Title="MaterialPropertyData" Height="450" Width="800" WindowStartupLocation="CenterScreen">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="0,0,0,10">
+            <TextBlock Text="{Binding FullMaterialName}" FontSize="16" FontWeight="Bold"/>
+            <TextBlock Text="{Binding MaterialType}" Foreground="Gray"/>
+        </StackPanel>
+
+        <DataGrid Grid.Row="1" 
+                  ItemsSource="{Binding PropertyItems}" 
+                  AutoGenerateColumns="False" 
+                  CanUserAddRows="False"
+                  HeadersVisibility="Column"
+                  GridLinesVisibility="Horizontal"
+                  Background="White">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Property" Binding="{Binding PropertyName}" Width="2*" IsReadOnly="True" />
+                <DataGridTextColumn Header="Value" Binding="{Binding PropertyValue}" Width="1*" />
+                <DataGridTextColumn Header="Unit" Binding="{Binding Unit}" Width="0.5*" IsReadOnly="True" />
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+            <Button Content="OK" Width="80" Command="{Binding SaveCommand}" Margin="5,0"/>
+            <Button Content="Cancel" Width="80" IsCancel="True" Margin="5,0"/>
+        </StackPanel>
+    </Grid>
+</Window>

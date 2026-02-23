@@ -18,15 +18,12 @@
 
             <GroupBox Header="Materials" Grid.Column="0" Margin="5" Foreground="Blue">
                 <ListBox x:Name="MaterialsList" 
-                         ItemsSource="{Binding Materials}" 
-                         SelectedItem="{Binding SelectedMaterial}"
-                         Margin="5" BorderThickness="1" BorderBrush="#AAAAAA">
+         ItemsSource="{Binding MaterialsList}" 
+         SelectedItem="{Binding SelectedMaterial}"
+         Margin="5" BorderThickness="1" BorderBrush="#AAAAAA">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="{Binding MaterialGrade}" FontWeight="Bold" Margin="0,0,5,0"/>
-                                <TextBlock Text="{Binding MaterialName}" Foreground="Gray"/>
-                            </StackPanel>
+                            <TextBlock Text="{Binding}" VerticalAlignment="Center"/>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>

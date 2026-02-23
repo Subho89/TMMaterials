@@ -216,7 +216,12 @@ namespace TMMaterials.Services
         private tblStandards GetOrCreateStandard(string name)
         {
             var s = _db.tblStandards.FirstOrDefault(x => x.StandardName.ToLower() == name.ToLower());
-            if (s == null) { name = char.ToUpper(name[0]) + name.Substring(1).ToLower(); s = new tblStandards { StandardName = name }; _db.tblStandards.Add(s); _db.SaveChanges(); }
+            if (s == null) 
+            {  
+                s = new tblStandards { StandardName = name }; 
+                _db.tblStandards.Add(s); 
+                _db.SaveChanges(); 
+            }
             return s;
         }
 

@@ -1,10 +1,12 @@
-﻿using MvvmHelpers;
+﻿using GalaSoft.MvvmLight.Command;
+using MvvmHelpers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using TMMaterials.DAL.Model;
 using TMMaterials.Services.ViewModels;
 
@@ -13,11 +15,13 @@ namespace TMMaterials.ViewModel
     public class AddMaterialsVM : BaseViewModel
     {
         private readonly AddMaterialsServicesVM _service;
-
+        public Action CloseAction { get; set; }
         public ObservableCollection<tblMain> Regions { get; set; }
         public ObservableCollection<tblMaterialTypes> MaterialTypes { get; set; }
-        public ObservableCollection<string> Standards { get; set; } = new();
+        public ObservableCollection<StandardLookupVM> Standards { get; set; } = new();
         public ObservableCollection<tblCollectionStandards> Grades { get; set; } = new();
+
+        public ICommand OkCommand { get; }
 
         // Selected items trigger cascading updates
         private tblMain _selectedRegion;
@@ -40,15 +44,15 @@ namespace TMMaterials.ViewModel
             }
         }
 
-        private string _selectedStandard;
-        public string SelectedStandard
+        private StandardLookupVM _selectedStandard;
+        public StandardLookupVM SelectedStandard
         {
             get => _selectedStandard;
             set
             {
                 _selectedStandard = value;
                 OnPropertyChanged();
-                UpdateGrades(); // Triggers the final cascade for Grades
+                UpdateGrades(); // Now we can use SelectedStandard.StandardId
             }
         }
 
@@ -62,11 +66,16 @@ namespace TMMaterials.ViewModel
                 OnPropertyChanged();
             }
         }
-        public AddMaterialsVM()
+
+        private readonly Action<string> _onMaterialAdded;
+        public AddMaterialsVM(Action<string> onMaterialAdded)
         {
+            _onMaterialAdded = onMaterialAdded;
             _service = new AddMaterialsServicesVM(); // From TMMaterials.Services
             Regions = new ObservableCollection<tblMain>(_service.GetAllRegions());
             MaterialTypes = new ObservableCollection<tblMaterialTypes>(_service.GetAllTypes());
+
+            OkCommand = new RelayCommand(OnOk);
         }
 
         private void UpdateStandards()
@@ -90,21 +99,44 @@ namespace TMMaterials.ViewModel
 
         private void UpdateGrades()
         {
-            // Ensure all prerequisites are met before calling the service
-            if (SelectedRegion == null || SelectedType == null || string.IsNullOrEmpty(SelectedStandard))
+            if (SelectedRegion == null || SelectedType == null || SelectedStandard == null)
             {
                 Grades.Clear();
                 return;
             }
 
-            // Call the service method you just created
-            var list = _service.GetGrades(SelectedRegion.mainId, SelectedType.materialTypeId, SelectedStandard);
+            // Use the StandardId for a more accurate filter
+            var list = _service.GetGrades(
+                SelectedRegion.mainId,
+                SelectedType.materialTypeId,
+                SelectedStandard.StandardId
+            );
 
             Grades.Clear();
-            foreach (var g in list)
+            foreach (var g in list) Grades.Add(g);
+        }
+
+        private void OnOk()
+        {
+            if (SelectedStandard == null || SelectedGrade == null) return;
+
+            string standardName = SelectedStandard.StandardName;
+
+            // Check if ':' exists to remove the year part
+            if (standardName.Contains(":"))
             {
-                Grades.Add(g);
+                standardName = standardName.Split(':')[0].Trim();
             }
+
+            // Merge Standard and Grade
+            string mergedDisplay = $"{standardName}-{SelectedGrade.MaterialGrade}";
+
+            // Execute the callback to update the main MaterialsList
+            _onMaterialAdded?.Invoke(mergedDisplay);
+            CloseAction?.Invoke();
+            // TODO: Send 'mergedDisplay' back to the calling window
         }
     }
+
+    
 }

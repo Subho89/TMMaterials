@@ -6,9 +6,9 @@
         Background="#F0F0F0" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
 
 
-    <Window.DataContext>
+    <!--<Window.DataContext>
         <vm:AddMaterialsVM />
-    </Window.DataContext>
+    </Window.DataContext>-->
 
     <Grid Margin="20">
         <Grid.RowDefinitions>
@@ -36,7 +36,10 @@
                 <ComboBox Grid.Row="1" Grid.Column="1" Margin="0,5" ItemsSource="{Binding MaterialTypes}" DisplayMemberPath="TypeName" SelectedItem="{Binding SelectedType}"/>
 
                 <TextBlock Grid.Row="2" Grid.Column="0" Text="Standard" VerticalAlignment="Center" Margin="0,5"/>
-                <ComboBox Grid.Row="2" Grid.Column="1" Margin="0,5" ItemsSource="{Binding Standards}" SelectedItem="{Binding SelectedStandard}"/>
+                <ComboBox Grid.Row="2" Grid.Column="1" Margin="0,5"
+          ItemsSource="{Binding Standards}" 
+          SelectedItem="{Binding SelectedStandard}"
+          DisplayMemberPath="StandardName" />
 
                 <TextBlock Grid.Row="3" Grid.Column="0" Text="Grade" VerticalAlignment="Center" Margin="0,5"/>
                 <ComboBox Grid.Row="3" Grid.Column="1" Margin="0,5" ItemsSource="{Binding Grades}" DisplayMemberPath="MaterialGrade" SelectedItem="{Binding SelectedGrade}"/>
